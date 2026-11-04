@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0}</style>
+<title>Ta boule de neige</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one column notebook-style tool; controls card, then the result with its curve. Mascot colors: suit navy + tie red. */
+:root{
+  --bg:#F3F5F9; --surface:#FFFFFF; --ink:#141B2D; --muted:#5A6378; --line:#D9DEE8;
+  --navy:#1F2A44; --tie:#C0392B; --paid:#9AA6BF; --grow:#1F2A44; --soft:#E8ECF4;
+  --display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1422; --surface:#182033; --ink:#EEF1F7; --muted:#A3ACC0; --line:#2C3650;
+  --navy:#C9D4F0; --tie:#E86A5C; --paid:#56627D; --grow:#8FA6DD; --soft:#222C44; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1422; --surface:#182033; --ink:#EEF1F7; --muted:#A3ACC0; --line:#2C3650;
+  --navy:#C9D4F0; --tie:#E86A5C; --paid:#56627D; --grow:#8FA6DD; --soft:#222C44; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:760px;margin:0 auto;display:grid;gap:22px}
+header{display:flex;align-items:center;gap:16px}
+header svg{width:72px;height:auto;flex:none}
+.brand{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--tie);font-weight:600}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:2px 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:56ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.controls{display:grid;gap:18px}
+.row{display:grid;gap:8px}
+.row label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:600}
+.row output{font-family:var(--display);font-weight:700;font-size:20px;color:var(--navy);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--tie);height:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);color:var(--surface);border-color:var(--navy)}
+.chip:focus-visible,input:focus-visible{outline:3px solid var(--tie);outline-offset:2px}
+.chip small{opacity:.75}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+.result{display:grid;gap:16px}
+.headline{font-size:17px;margin:0}
+.big{font-family:var(--display);font-weight:800;font-size:clamp(40px,11vw,64px);line-height:1;color:var(--navy);font-variant-numeric:tabular-nums;margin:6px 0 0}
+.split{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--soft)}
+.split span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--muted)}
+.legend b{color:var(--ink);font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.chart{width:100%;overflow:hidden}
+.chart svg{display:block;width:100%;height:auto}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:560px){.facts{grid-template-columns:1fr}}
+.fact{background:var(--soft);border-radius:10px;padding:14px}
+.fact .k{font-size:13px;color:var(--muted)}
+.fact .v{font-family:var(--display);font-weight:700;font-size:24px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.fact .n{font-size:13px;color:var(--muted)}
+.warn .v{color:var(--tie)}
+.note{font-size:13px;color:var(--muted);margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <svg viewBox="160 30 240 360" aria-hidden="true">
+      <polygon points="225,175 325,175 345,300 205,300" fill="#1F2A44" stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round"/>
+      <polygon points="255,175 295,175 275,235" fill="#fff" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+      <polygon points="269,182 281,182 284,222 275,236 266,222" fill="#C0392B" stroke="#1a1a1a" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="228" y1="185" x2="185" y2="250" stroke="#1F2A44" stroke-width="14" stroke-linecap="round"/>
+      <line x1="322" y1="185" x2="370" y2="140" stroke="#1F2A44" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="182" cy="256" r="9" fill="#fff" stroke="#1a1a1a" stroke-width="2.5"/>
+      <circle cx="374" cy="134" r="9" fill="#fff" stroke="#1a1a1a" stroke-width="2.5"/>
+      <line x1="374" y1="125" x2="378" y2="108" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+      <rect x="225" y="298" width="100" height="14" fill="#1F2A44" stroke="#1a1a1a" stroke-width="2.5"/>
+      <line x1="248" y1="312" x2="242" y2="368" stroke="#1F2A44" stroke-width="16" stroke-linecap="round"/>
+      <line x1="302" y1="312" x2="308" y2="368" stroke="#1F2A44" stroke-width="16" stroke-linecap="round"/>
+      <ellipse cx="234" cy="372" rx="16" ry="7" fill="#1a1a1a"/><ellipse cx="316" cy="372" rx="16" ry="7" fill="#1a1a1a"/>
+      <circle cx="275" cy="105" r="62" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+      <circle cx="252" cy="98" r="16" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+      <circle cx="298" cy="98" r="16" fill="none" stroke="#1a1a1a" stroke-width="3"/>
+      <line x1="268" y1="98" x2="282" y2="98" stroke="#1a1a1a" stroke-width="3"/>
+      <ellipse cx="253" cy="99" rx="8" ry="3.5" fill="none" stroke="#1a1a1a" stroke-width="1.5"/><circle cx="256" cy="99" r="2.5" fill="#1a1a1a"/>
+      <ellipse cx="297" cy="99" rx="8" ry="3.5" fill="none" stroke="#1a1a1a" stroke-width="1.5"/><circle cx="300" cy="99" r="2.5" fill="#1a1a1a"/>
+      <path d="M238 74 L258 75" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M286 76 Q298 66 310 73" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M273 112 L272 124" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M256 140 Q272 147 292 136" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <div class="brand">5 min pour tout comprendre</div>
+      <h1>Calcule ta boule de neige</h1>
+      <p class="sub">Entre ton âge et ce que tu peux mettre de côté chaque mois. Tu vois ce que les intérêts composés peuvent en faire.</p>
+    </div>
+  </header>
+
+  <section class="card controls" aria-label="Tes paramètres">
+    <div class="two">
+      <div class="row">
+        <label for="age">Ton âge <output id="ageOut"></output></label>
+        <input type="range" id="age" min="15" max="64" step="1" value="20">
+      </div>
+      <div class="row">
+        <label for="target">Jusqu'à quel âge <output id="targetOut"></output></label>
+        <input type="range" id="target" min="20" max="75" step="1" value="60">
+      </div>
+    </div>
+    <div class="row">
+      <label for="monthly">Chaque mois <output id="monthlyOut"></output></label>
+      <input type="range" id="monthly" min="25" max="2000" step="25" value="500">
+      <div class="chips" id="amountChips">
+        <button class="chip" data-v="50">50</button><button class="chip" data-v="100">100</button>
+        <button class="chip" data-v="200">200</button><button class="chip" data-v="500">500</button>
+        <button class="chip" data-v="1000">1 000</button>
+      </div>
+    </div>
+    <div class="row">
+      <label for="rate">Rendement moyen par an <output id="rateOut"></output></label>
+      <input type="range" id="rate" min="0" max="15" step="0.5" value="7">
+      <div class="chips" id="profileChips">
+        <button class="chip" data-r="2">Épargne garantie <small>2 %</small></button>
+        <button class="chip" data-r="4">Prudence <small>4 %</small></button>
+        <button class="chip" data-r="6">Équilibre <small>6 %</small></button>
+        <button class="chip" data-r="7">Bourse long terme <small>7 %</small></button>
+        <button class="chip" data-r="8">Audace <small>8 %</small></button>
+        <button class="chip" data-r="10">Très audacieux <small>10 %</small></button>
+      </div>
+      <p class="note">Au-delà de 10 % par an sur des décennies, c'est très rare : méfie-toi de qui te le promet.</p>
+    </div>
+    <div class="row">
+      <span style="font-weight:600">Devise</span>
+      <div class="chips" id="curChips">
+        <button class="chip" data-c="$">Dollar ($)</button><button class="chip" data-c="€">Euro (€)</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card result" aria-live="polite">
+    <div>
+      <p class="headline" id="headline"></p>
+      <p class="big" id="total"></p>
+    </div>
+    <div class="split" aria-hidden="true"><span id="barPaid" style="background:var(--paid)"></span><span id="barGrow" style="background:var(--grow)"></span></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--paid)"></i>Tu as mis <b id="paid"></b></span>
+      <span><i class="dot" style="background:var(--grow)"></i>Intérêts composés <b id="grow"></b></span>
+    </div>
+    <div class="chart" id="chart"></div>
+    <div class="facts">
+      <div class="fact warn"><div class="k">Si tu attends 10 ans de plus</div><div class="v" id="wait"></div><div class="n" id="waitNote"></div></div>
+      <div class="fact"><div class="k">En argent d'aujourd'hui</div><div class="v" id="real"></div><div class="n">Avec une inflation de 3 % par an, ce que ce montant pourrait acheter aujourd'hui.</div></div>
+    </div>
+    <p class="note">Outil éducatif, pas un conseil financier.</p>
+  </section>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const state = { cur: "$" };
+const pct = v => v.toLocaleString("fr-CA",{maximumFractionDigits:1})+" %";
+function fv(m, years, rate){ const r = rate/100/12, n = Math.round(years*12); return r===0 ? m*n : m*((Math.pow(1+r,n)-1)/r); }
+function money(v){ const s = Math.round(v).toLocaleString("fr-CA").replace(/ | /g," "); return state.cur==="$" ? s+" $" : s+" €"; }
+function short(v){ if(v>=1e6) return (v/1e6).toLocaleString("fr-CA",{maximumFractionDigits:1})+" M"; if(v>=1e3) return Math.round(v/1e3)+" k"; return Math.round(v)+""; }
+function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function draw(age, years, m, rate){
+  const W=700,H=260,L=56,R=32,T=16,B=34, iw=W-L-R, ih=H-T-B;
+  const pts=[]; for(let y=0;y<=years;y++) pts.push({y, total:fv(m,y,rate), paid:m*12*y});
+  const max = Math.max(1, pts[pts.length-1].total);
+  const step = Math.pow(10, Math.floor(Math.log10(max)));
+  let tick = step; if(max/tick < 3) tick = step/2; if(max/tick > 6) tick = step*2;
+  const top = Math.ceil(max/tick)*tick;
+  const x = y => L + (years ? y/years : 0)*iw, yv = v => T + ih - v/top*ih;
+  const line = k => pts.map((p,i)=>(i?"L":"M")+x(p.y).toFixed(1)+" "+yv(p[k]).toFixed(1)).join(" ");
+  const area = k => line(k)+` L${x(years).toFixed(1)} ${yv(0)} L${x(0)} ${yv(0)} Z`;
+  let g="";
+  for(let v=0; v<=top+1e-6; v+=tick){ g+=`<line x1="${L}" x2="${W-R}" y1="${yv(v)}" y2="${yv(v)}" stroke="${css('--line')}" stroke-width="1"/><text x="${L-8}" y="${yv(v)+4}" text-anchor="end" font-size="12" fill="${css('--muted')}">${short(v)}</text>`; }
+  const xstep = years>30?10:years>12?5:years>5?2:1;
+  for(let y=0;y<=years;y+=xstep){ g+=`<text x="${x(y)}" y="${H-10}" text-anchor="middle" font-size="12" fill="${css('--muted')}">${age+y} ans</text>`; }
+  const end = pts[pts.length-1];
+  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Courbe de la valeur de ton placement année par année">${g}
+    <path d="${area('total')}" fill="${css('--grow')}" opacity=".18"/>
+    <path d="${area('paid')}" fill="${css('--paid')}" opacity=".45"/>
+    <path d="${line('total')}" fill="none" stroke="${css('--grow')}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="${line('paid')}" fill="none" stroke="${css('--paid')}" stroke-width="2" stroke-dasharray="5 4"/>
+    <circle cx="${x(years)}" cy="${yv(end.total)}" r="6" fill="${css('--tie')}" stroke="${css('--surface')}" stroke-width="2"/></svg>`;
+}
+
+function update(){
+  let age=+$("age").value, target=+$("target").value;
+  if(target<=age){ target=age+1; $("target").value=target; }
+  const m=+$("monthly").value, years=target-age, rate=+$("rate").value;
+  $("rateOut").textContent=pct(rate);
+  $("ageOut").textContent=age+" ans"; $("targetOut").textContent=target+" ans"; $("monthlyOut").textContent=money(m);
+  const total=fv(m,years,rate), paid=m*12*years, grow=Math.max(0,total-paid);
+  $("headline").textContent=`En mettant ${money(m)} par mois de ${age} à ${target} ans, à ${pct(rate)} par an, tu pourrais avoir environ`;
+  $("total").textContent=money(total);
+  $("paid").textContent=money(paid); $("grow").textContent=money(grow);
+  const pp = total ? paid/total*100 : 100; $("barPaid").style.width=pp+"%"; $("barGrow").style.width=(100-pp)+"%";
+  const wy=years-10;
+  if(wy>0){ const w=fv(m,wy,rate); $("wait").textContent=money(w); $("waitNote").textContent=`En commençant à ${age+10} ans au lieu de ${age} : ${money(total-w)} de moins.`; }
+  else { $("wait").textContent="—"; $("waitNote").textContent="Il te reste moins de 10 ans : chaque année compte."; }
+  $("real").textContent=money(total/Math.pow(1.03,years));
+  document.querySelectorAll("#amountChips .chip").forEach(c=>c.setAttribute("aria-pressed", +c.dataset.v===m));
+  document.querySelectorAll("#profileChips .chip").forEach(c=>c.setAttribute("aria-pressed", +c.dataset.r===rate));
+  document.querySelectorAll("#curChips .chip").forEach(c=>c.setAttribute("aria-pressed", c.dataset.c===state.cur));
+  draw(age, years, m, rate);
+}
+["age","target","monthly","rate"].forEach(id=>$(id).addEventListener("input",update));
+$("amountChips").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(b){$("monthly").value=b.dataset.v; update();}});
+$("profileChips").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(b){$("rate").value=b.dataset.r; update();}});
+$("curChips").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(b){state.cur=b.dataset.c; update();}});
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",update);
+new MutationObserver(update).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+update();
+</script>
+
+</html>
